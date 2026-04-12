@@ -675,7 +675,7 @@ body {
         position: fixed;
         /* display: none; */
         background-color: #0f172a;
-        border: 1px solid purple;
+        /* border: 1px solid purple; */
         height: 100%;
         width: 100%;
         top: 100%;
