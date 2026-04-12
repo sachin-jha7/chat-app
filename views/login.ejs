@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+
+<body>
+    <h3>Login to continue</h3>
+    <form class="login-form" method="post" action="/login">
+        <input class="email" type="email" placeholder="Enter email..." name="email">
+        <div class="password-wrapper">
+            <input class="password1" type="password" placeholder="Enter password" name="password">
+            <i class="fa fa-eye" id="togglePassword1"></i>
+        </div>
+        <button class="btn">Login</button>
+        <p>Don't have an account? <button class="signup-form-open" type="button">Signup</button></p>
+    </form>
+
+    <form class="signup-form" method="post" action="/signup">
+        <input class="fullName" type="text" placeholder="Enter Full Name..." name="fullName">
+        <input class="email" type="email" placeholder="Enter email..." name="email">
+        <div class="password-wrapper">
+            <input class="password2" type="password" placeholder="Enter password" name="password">
+            <i class="fa fa-eye" id="togglePassword2"></i>
+        </div>
+
+        <button class="btn">Register</button>
+    </form>
+
+
+    <script>
+        const OpenSignupFormBtn = document.querySelector(".signup-form-open");
+        OpenSignupFormBtn.addEventListener("click", () => {
+            document.querySelector(".login-form").style.display = "none";
+            document.querySelector(".signup-form").style.display = "flex";
+            document.querySelector("h3").innerText = "Create your account";
+        });
+        const togglePasswordBtn1 = document.querySelector("#togglePassword1");
+        const togglePasswordBtn2 = document.querySelector("#togglePassword2");
+
+        const password1 = document.querySelector(".password1");
+        const password2 = document.querySelector(".password2");
+
+        togglePasswordBtn1.addEventListener("click", function () {
+            const type = password1.getAttribute('type') === 'password' ? 'text' : 'password';
+            password1.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+        });
+
+        togglePasswordBtn2.addEventListener("click", function () {
+            const type = password2.getAttribute('type') === 'password' ? 'text' : 'password';
+            password2.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+        });
+
+
+
+    </script>
+</body>
+
+</html>

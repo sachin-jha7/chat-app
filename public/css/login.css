@@ -1,0 +1,118 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: #0f172a;
+}
+
+h3 {
+    position: fixed;
+    top: 15%;
+    left: 50%;
+    transform: translate(-50%, -20%);
+    color: silver;
+    color: #cbd5e1;
+    color: #818cf8;
+    font-size: 30px;
+    white-space: nowrap;
+}
+
+form {
+    width: fit-content;
+    background-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    padding: 40px;
+    /* margin: auto;
+    margin-top: 120px; */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border-radius: 10px;
+}
+
+
+form div {
+    position: relative;
+}
+
+div i {
+    position: absolute;
+    top: 29%;
+    right: 1%;
+}
+
+input {
+    width: 270px;
+    height: 40px;
+    padding: 0px 15px;
+    border-radius: 3px;
+    outline: none;
+    border: none;
+}
+
+button {
+    height: 40px;
+    font-size: 16px;
+    background-color: #22c55e;
+    border: 1px solid #22c55e;
+    border-radius: 3px;
+    color: #fff;
+    font-weight: 500;
+}
+
+button:hover {
+    background-color: #16a34a;
+    border: 1px solid #16a34a;
+    cursor: pointer;
+}
+
+form p {
+    font-size: 18px;
+    color: silver;
+}
+
+.signup-form-open {
+    background-color: transparent;
+    border: none;
+    color: limegreen;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.signup-form-open:hover {
+    text-decoration: underline limegreen;
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+}
+
+.signup-form {
+    display: none;
+}
+
+@media (max-width: 430px) {
+    form {
+        width: 98vw;
+        padding: 30px;
+        /* justify-content: center; */
+        align-items: center;
+    }
+
+    input {
+        width: 85vw;
+    }
+
+    .btn {
+        width: 85vw;
+    }
+
+
+}
