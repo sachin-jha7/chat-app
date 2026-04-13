@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playwrite+IE:wght@100..400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/cropperjs@1.6.2/dist/cropper.css">
     <link rel="stylesheet" href="/css/index.css">
 </head>
 
@@ -105,22 +106,23 @@
                 <img src="<%= currUserDoc.imageUrl %>" alt="profile-img">
                 <form method="post" action="/chats" enctype="multipart/form-data">
                     <label for="image">Upload Image</label>
-                    <input id="image" type="file" accept="image/*" name="image" onchange="this.form.submit()" hidden>
+                    <input id="image" type="file" accept="image/*" name="image" hidden>
                 </form>
                 <p>
                     <%= currUserDoc.fullName %>
                 </p>
             </div>
+            <div class="image-editor-div">
+                <img id="preview">
+                <button class="done-crop">Done</button>
+            </div>
         </div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
+    <script src="https://unpkg.com/cropperjs@1.6.2/dist/cropper.js"></script>
     <script>
-        const currUserId = "<%= currUser %>";
-        const fileInput = document.getElementById("image");
-        fileInput.onchange = () => {
-            fileInput.form.submit();
-        }
+        const currUserId = "<%= currUserDoc._id %>";
     </script>
     <script src="/js/app.js"></script>
 </body>
