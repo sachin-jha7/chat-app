@@ -87,8 +87,11 @@ module.exports.login = async (req, res, next) => {
 }
 
 
-// const Messages = require("../models/messages");
-module.exports.logout =  (req, res) => {
-    // await Messages.deleteMany({})
-    res.clearCookie("token").redirect("/chats");
+
+module.exports.logout = (req, res) => {
+    res.clearCookie("token", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None"
+    }).redirect("/chats");
 }
