@@ -117,7 +117,7 @@ app.get("/chats/:id", async (req, res) => {
 app.get("/chats/find/:name", async (req, res) => {
     const name = req.params;
     let searchedName = name.name;
-    searchedName = searchedName.toUpperCase();
+    searchedName = searchedName.trim().toUpperCase();
     // console.log(searchedName.name);
     const userInfo = await User.find({ username: searchedName });
     res.send(userInfo);
