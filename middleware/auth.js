@@ -33,7 +33,7 @@ module.exports.signup = async (req, res, next) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const username = fullName.toUpperCase();
+    const username = fullName.trim().toUpperCase();
 
     const user = await User.create({
         fullName,
