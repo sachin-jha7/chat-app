@@ -73,7 +73,10 @@ app.get("/chats", authMiddleware.verify, async (req, res) => {
 
 app.post("/chats", authMiddleware.verify, upload.single("image"), async (req, res) => {
     try {
-        console.log("route hit");
+        // console.log("route hit");
+        if(!req.file) {
+            return res.status(400).send(`Error: No File`);
+        }
         const stream = cloudinary.uploader.upload_stream(
             { folder: "chat-app" },
             async (error, result) => {
