@@ -11,6 +11,54 @@ const allCards = document.querySelectorAll(".card-container .card");
 let roomId;
 let cardId;
 
+//  Image crop functionality
+
+const imgInp = document.querySelector("#image");
+const preview = document.querySelector("#preview");
+
+let cropper;
+
+imgInp.addEventListener("change", (event) => {
+    const file = event.target.files[0];
+    document.querySelector(".image-editor-div").style.display = "block";
+    const url = URL.createObjectURL(file);
+    preview.src = url;
+    // document.querySelector(".profile-section").style.filter = "blur(8px)";
+    // document.querySelector(".chat-section").style.filter = "blur(8px)";
+
+    if (cropper) cropper.destroy();
+
+    cropper = new Cropper(preview, {
+        aspectRatio: NaN,
+        viewMode: 1,
+        autoCropArea: 1,
+        responsive: true,
+        background: false,
+    });
+});
+
+const cropDoneBtn = document.querySelector(".done-crop");
+
+cropDoneBtn.addEventListener("click", () => {
+    const canvas = cropper.getCroppedCanvas({
+        width: 300,
+        height: 300,
+        imageSmoothingQuality: "high"
+    });
+    setTimeout(() => {
+        document.querySelector(".image-editor-div").style.display = "none";
+    }, 1000);
+    canvas.toBlob((blob) => {
+        const formData = new FormData();
+        formData.append("image", blob);
+
+        fetch("/chats", {
+            method: "POST",
+            body: formData
+        });
+    });
+});
+
 
 // Showing chat history on selection of a chat
 
