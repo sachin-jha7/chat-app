@@ -621,6 +621,41 @@ body {
     margin-top: 20px;
 }
 
+/* Cropper Js Things */
+
+.profile-section .image-editor-div {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    z-index: 99;
+    display: none;
+}
+
+.image-editor-div img {
+    max-height: 400px;
+    max-width: 400px;
+}
+
+.image-editor-div .done-crop {
+    padding: 7px 15px;
+    font-size: 16px;
+    font-weight: 500;
+    display: block;
+    margin: 20px auto;
+    background-color: #0084ff;
+    border: 1px solid #0084ff;
+    color: #fff;
+    border-radius: 3px;
+}
+
+.done-crop:hover {
+    background-color: #2563eb;
+    border: 1px solid #2563eb;
+    cursor: pointer;
+}
 
 
 @media (max-width:700px) {
