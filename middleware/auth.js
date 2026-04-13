@@ -51,7 +51,8 @@ module.exports.signup = async (req, res, next) => {
 
     res.cookie("token", token, {
         httpOnly: true,
-
+        secure: true,
+        sameSite: "None",
     })
         .status(201)
         .redirect("/chats");
