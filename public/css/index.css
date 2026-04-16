@@ -9,7 +9,6 @@ body {
     padding: 0;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     height: 100vh;
-    /* background-color: #000; */
     background-color: #0f172a;
     color: #fff;
 }
@@ -22,24 +21,22 @@ body {
 
 .container .friends-section {
     width: 30%;
-    /* border: 1px solid orangered; */
     height: 100%;
     overflow-y: auto;
-    z-index: 99;
-    position: relative;
+    /* position: relative; */
+    /* z-index: -9; */
 }
 
 .friends-section .nav {
     position: sticky;
     top: 0;
     padding: 10px;
-    /* background-color: #333; */
     height: 90px;
-    /* background-color: rgba(0, 0, 0, 0.15); */
     background-color: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
+    z-index: 1;
 }
 
 .friends-section .nav p {
@@ -72,8 +69,6 @@ body {
     margin-left: auto;
     font-size: 15px;
     font-weight: 500;
-    /* background-color: dodgerblue;
-    border: 1px solid dodgerblue; */
     background-color: #22c55e;
     border: 1px solid #22c55e;
     color: #fff;
@@ -81,7 +76,6 @@ body {
 }
 
 .find-people-btn:hover {
-    /* background-color: rgb(24, 115, 206); */
     background-color: #16a34a;
     border: 1px solid #16a34a;
     cursor: pointer;
@@ -90,13 +84,12 @@ body {
 .friends-section .people-search-bar {
     height: 100%;
     width: 30%;
-    /* border: 1px solid blue; */
     background-color: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
     position: fixed;
     top: 100%;
     overflow-y: auto;
-
+    z-index: 2;
 }
 
 .people-search-bar form {
@@ -109,7 +102,7 @@ body {
     gap: 5px;
     position: sticky;
     top: 0;
-    z-index: 99;
+    /* z-index: 99; */
 }
 
 .people-search-bar input {
@@ -138,15 +131,14 @@ body {
 .people-search-bar .find-people-cross-btn {
     position: fixed;
     top: 0;
-    left: 92%;
+    left: 90%;
     border: none;
     background: transparent;
     cursor: pointer;
 }
 
 .find-people-cross-btn i {
-    font-size: 25px;
-    color: #da3e05;
+    font-size: 23px;
     color: red;
 }
 
@@ -200,7 +192,7 @@ body {
 .container .friends-section .card-container {
     /* height: calc(100% - 70px); */
     overflow-y: auto;
-    position: relative;
+    /* position: relative; */
 }
 
 
@@ -217,7 +209,7 @@ body {
     border-radius: 10px;
     color: #fff;
     /* position: relative; */
-    z-index: -999;
+    /* z-index: -999; */
 }
 
 .placeholder-text {
@@ -226,7 +218,7 @@ body {
     left: 15%;
     transform: translate(-40%, -50%);
     white-space: wrap;
-    /* width: 30%; */
+    width: 30%;
 }
 
 .card-container .card:hover {
@@ -234,7 +226,12 @@ body {
     cursor: pointer;
 }
 
-.card-container .card img {
+.card-container .card .img-box {
+    position: relative;
+
+}
+
+.card-container .card .img-box img {
     width: 70px;
     height: 70px;
     border-radius: 50%;
@@ -245,17 +242,14 @@ body {
     font-weight: 500;
 }
 
-.card-container .card .status {
+.card-container .card .img-box i {
     position: absolute;
-    top: 77%;
-    left: 30%;
-    font-size: 13px;
-}
-
-.status i {
-    color: #22c55e;
+    top: 80%;
+    left: 70%;
+    color: red;
     font-size: 10px;
 }
+
 
 
 /* Notifications Section */
@@ -269,6 +263,7 @@ body {
     position: fixed;
     top: 100%;
     overflow-y: auto;
+    z-index: 1;
 }
 
 .notification-bar .notification-nav {
@@ -309,8 +304,6 @@ body {
 
 .notification-container .notification-card {
     display: flex;
-    /* background-color: #e4e6eb; */
-    background-color: #ef4444;
     background-color: #1e293b;
     padding: 10px;
     justify-content: center;
@@ -324,9 +317,7 @@ body {
     border-radius: 5px;
 }
 
-/* .notification-card p {
-    margin-left: 20px;
-} */
+
 .notification-card button {
     padding: 5px 15px;
     border-radius: 20px;
@@ -343,7 +334,6 @@ body {
 }
 
 .reject-req-btn {
-    border: 2px solid #da3e05;
     border: 2px solid #ef4444;
     margin-top: 5px;
     /* padding: 5px 25px; */
@@ -363,11 +353,7 @@ body {
     align-items: center;
 }
 
-/* .chat-section p {
-    height: fit-content;
-    width: fit-content;
-    margin: auto;
-} */
+
 
 .container .chat-section .chat-wrapper {
     height: 100%;
@@ -407,8 +393,7 @@ body {
 }
 
 #sent-msg p {
-    background-color: #0084ff;
-    background-color: #3b82f6;
+    background-color: #193b53;
     color: #fff;
     margin-right: 5px;
 }
@@ -441,18 +426,19 @@ body {
 }
 
 .form button {
-    background: #333;
-    border: 1px solid #333;
+    background: transparent;
     border: none;
-    padding: 7px 16px;
-    margin-left: 8px;
-    border-radius: 3px;
-    color: #fff;
-    font-size: 16px;
+    margin-right: 10px;
 }
 
-.form button:hover {
-    background: #0f0e0e;
+.form button i {
+    color: #22c55e;
+    font-size: 35px;
+    transform: rotate(45deg);
+}
+
+.form button:hover i {
+    font-size: 35.4px;
     cursor: pointer;
 }
 
@@ -460,8 +446,6 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    /* border: 1px solid chocolate; */
-    /* background-color: rgba(255, 255, 255, 0.25); */
     background-color: transparent;
     /* backdrop-filter: blur(10px); */
     position: sticky;
@@ -475,13 +459,29 @@ body {
     height: 90px;
     width: 40%;
     background-color: rgba(255, 255, 255, 0.2);
-
     backdrop-filter: blur(10px);
-    /* border: 1px solid red; */
+    display: flex;
+    align-items: center;
 }
 
+.temp-nav button {
+    border: none;
+    background: transparent;
+    margin-left: auto;
+    display: none;
+}
+
+.temp-nav button i {
+    font-size: 30px;
+    color: silver;
+}
+
+.temp-nav button:hover {
+    cursor: pointer;
+}
+
+
 .chat-section .nav .nav-card {
-    /* background-color: chartreuse; */
     background-color: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
     display: flex;
@@ -502,13 +502,26 @@ body {
     margin-left: 10px;
 }
 
+.nav-card .profile-open-btn1 {
+    border: none;
+    background: transparent;
+    margin-left: auto;
+    display: none;
+}
+
+.profile-open-btn1 i {
+    font-size: 30px;
+    color: silver;
+}
+
+.profile-open-btn1:hover {
+    cursor: pointer;
+}
 
 /* profile section */
 
 .container .profile-section {
     width: 30%;
-    /* border: 1px solid firebrick; */
-    /* border-radius: 20px; */
 }
 
 .profile-section .nav {
@@ -530,11 +543,6 @@ body {
     /* margin-left: 10px; */
 }
 
-/* .profile-section .nav .btn-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-} */
 
 .profile-section .nav a {
     text-decoration: none;
@@ -571,23 +579,6 @@ body {
     font-weight: 500;
 }
 
-.btn {
-    display: none;
-}
-
-.for-friends {
-    display: none;
-}
-
-.for-friends-close {
-    display: none;
-}
-
-
-
-.btn-close {
-    display: none;
-}
 
 
 .go-back-to-friends-btn {
@@ -598,32 +589,22 @@ body {
     display: none;
 }
 
-.notifi-btn .fa-circle {
-    font-size: 10px;
-    position: fixed;
-    left: 51.5%;
-
-    color: lime;
-    /* display: none; */
-}
 
 .profile-card form label {
     padding: 7px 18px;
     display: block;
-    /* height: 35px;
-    width: 120px; */
     background-color: #16a34a;
     font-size: 18px;
     font-weight: 500;
     color: white;
-    /* box-shadow: 0px 0px 10px #22c55e; */
     border-radius: 5px;
     margin-top: 20px;
 }
 
+
 /* Cropper Js Things */
 
-.profile-section .image-editor-div {
+.image-editor-div {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -657,20 +638,101 @@ body {
     cursor: pointer;
 }
 
+.cross-btn-div {
+    display: none;
+}
 
-@media (max-width:700px) {
+.not-found {
+    background-color: #e74343;
+    padding: 10px 20px;
+    border-radius: 5px;
+    display: none;
+
+}
+
+.not-found p {
+    font-size: 18px;
+}
+
+.fa-pulse {
+    display: none;
+}
+
+@media (max-width:1137px) {
 
 
     .container .profile-section {
         position: fixed;
-        left: 100%;
-        width: 50%;
-        height: 100vh;
-        background-color: rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(10px);
+        right: 100%;
+        width: 60%;
+        height: 100%;
+        background-color: #0f172a;
+    }
+
+    .profile-section .nav {
+        justify-content: space-between;
     }
 
     .container .chat-section {
+        width: 60%;
+    }
+
+    .chat-section .temp-nav {
+        width: 60%;
+    }
+
+    .temp-nav button {
+        display: block;
+    }
+
+    .nav-card .profile-open-btn1 {
+        display: block;
+    }
+
+    .cross-btn-div {
+        display: block;
+    }
+
+    .go-back-to-chats {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+    }
+
+    .go-back-to-chats i {
+        font-size: 30px;
+        color: silver;
+    }
+
+    .container .friends-section {
+        width: 40%;
+    }
+
+    .friends-section .notification-bar {
+        width: 40%;
+    }
+
+    .friends-section .people-search-bar {
+        width: 40%;
+    }
+
+
+}
+
+@media (max-width:775px) {
+    .container .profile-section {
+        width: 50%;
+    }
+
+    .profile-section .nav {
+        justify-content: space-between;
+    }
+
+    .container .chat-section {
+        width: 50%;
+    }
+
+    .chat-section .temp-nav {
         width: 50%;
     }
 
@@ -678,28 +740,16 @@ body {
         width: 50%;
     }
 
-    .btn {
-        display: inline-block;
-        padding: 7px 15px;
-        width: fit-content;
-        margin-left: auto;
-        font-size: 18px;
+    .friends-section .notification-bar {
+        width: 50%;
     }
 
-    .for-friends {
-        display: none;
-    }
-
-    .for-friends-close {
-        display: block;
-    }
-
-    .btn-close {
-        display: block;
+    .friends-section .people-search-bar {
+        width: 50%;
     }
 }
 
-@media (max-width: 430px) {
+@media (max-width: 600px) {
 
     .container .friends-section {
         width: 100%;
@@ -708,9 +758,7 @@ body {
 
     .container .chat-section {
         position: fixed;
-        /* display: none; */
         background-color: #0f172a;
-        /* border: 1px solid purple; */
         height: 100%;
         width: 100%;
         top: 100%;
@@ -744,14 +792,12 @@ body {
         position: fixed;
         left: 75%;
         top: 80%;
-        /* box-shadow: 0px 0px 10px #22c55e; */
     }
 
     .show-profile-btn i {
         font-size: 50px;
         color: #22c55e;
         border-radius: 10px;
-        /* border: 1px solid #22c55e; */
         box-shadow: 0px 0px 10px #22c55e;
     }
 
@@ -774,6 +820,10 @@ body {
         display: flex;
     }
 
+    .profile-section .nav .cross-btn-div {
+        display: none;
+    }
+
     .profile-section .nav div p {
         margin-left: 15px;
     }
@@ -785,13 +835,32 @@ body {
     .friends-section .notification-bar {
         width: 100%;
     }
+
     .placeholder-text {
-        /* width: 100%; */
+        width: fit-content;
         top: 50%;
         left: 50%;
-        transform: translate(-50%,-50%);
-        /* white-space: ; */
+        transform: translate(-50%, -50%);
         white-space: nowrap;
     }
 
+    .image-editor-div img {
+        max-height: 50vh;
+        max-width: 95vw;
+    }
+
+    .nav-card .profile-open-btn {
+        display: none;
+    }
+
+}
+
+@media (max-width: 314px) {
+    .placeholder-text {
+        white-space: wrap;
+    }
+
+    .friends-section .nav p {
+        font-size: 20px;
+    }
 }
