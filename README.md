@@ -1,4 +1,4 @@
 **Real Time Chat App**
 
 **Tech Stack Used:**
->Express,MongoDb,EJS, and Socket.IO
+>Express, MongoDb, EJS, and Socket.IO
