@@ -5,12 +5,11 @@ const bcrypt = require("bcryptjs");
 module.exports.verify = async (req, res, next) => {
     const token = req.cookies.token;
     if (!token) {
-        res.status(401).redirect("/login");
+        return res.status(401).redirect("/login");
     }
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded;
-        // console.log(await User.findById(req.user.id));
 
         next();
     } catch (err) {
@@ -79,7 +78,9 @@ module.exports.login = async (req, res, next) => {
 
     res.cookie("token", token, {
         httpOnly: true,
-
+        secure: true,
+        sameSite: "None",
+        maxAge: 7 * 24 * 60 * 60 * 1000
     })
         .status(201)
         .redirect("/chats");
@@ -87,11 +88,10 @@ module.exports.login = async (req, res, next) => {
 }
 
 
-
 module.exports.logout = (req, res) => {
     res.clearCookie("token", {
         httpOnly: true,
         secure: true,
         sameSite: "None"
-    }).redirect("/chats");
+    }).redirect("/login");
 }
