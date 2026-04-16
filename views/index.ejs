@@ -19,26 +19,26 @@
             <div class="nav">
                 <p>Friends</p>
                 <button class="notifi-btn">
-
                     <i class="fa-solid fa-bell"></i>
-                    <!-- <i class="fas fa-circle"></i> -->
                 </button>
                 <button class="find-people-btn">Find People</button>
             </div>
             <div class="card-container">
                 <% if(friendsArray.length==0) { %>
                     <p class="placeholder-text">You don't have
-                        any friend try "find people"</p>
+                        any friend try `find people`</p>
                     <% } %>
-                        <% for(let friend of friendsArray) { %>
-                            <div id="<%= friend._id %>" class="card">
-                                <img src="<%= friend.imageUrl %>" alt="profile-img">
-                                <!-- <p class="status"><i class="fas fa-circle"></i></p> -->
-                                <p class="name">
-                                    <%= friend.fullName %>
-                                </p>
-                            </div>
-                            <% } %>
+                <% for(let friend of friendsArray) { %>
+                    <div id="<%= friend._id %>" class="card">
+                        <div class="img-box">
+                            <img src="<%= friend.imageUrl %>" alt="profile-img">
+                            <i class="fa-solid fa-circle"></i>
+                        </div>
+                        <p class="name">
+                            <%= friend.fullName %>
+                        </p>
+                    </div>
+                <% } %>
             </div>
             <button class="show-profile-btn"><i class="fa-solid fa-address-card"></i></button>
 
@@ -51,6 +51,9 @@
                     </button>
                 </form>
                 <div class="user-container">
+                    <div class="not-found">
+                        <p>User not found!</p>
+                    </div>
                 </div>
             </div>
             <div class="notification-bar">
@@ -75,23 +78,27 @@
                         <button class="go-back-to-friends-btn"><i class="fa-solid fa-arrow-left"></i></button>
                         <img>
                         <p></p>
+                        <button class="profile-open-btn1 profile-open-btn"><i class="fa-solid fa-bars"></i></button>
                     </div>
                 </div>
                 <div class="chat-container">
 
                 </div>
                 <form class="form" action="">
-                    <input class="input" placeholder="Enter some message..." autocomplete="off" type="text">
-                    <button>Send</button>
+                    <input class="input" placeholder="Send some message..." autocomplete="off" type="text">
+                    <button><i class="fa-solid fa-paper-plane"></i></button>
                 </form>
             </div>
             <div class="temp-nav">
-
+                <button class="profile-open-btn2 profile-open-btn"><i class="fa-solid fa-bars"></i></button>
             </div>
             <p class="no-chat">No chat selected!</p>
         </div>
         <div class="profile-section">
             <div class="nav">
+                <div class="cross-btn-div">
+                    <button class="go-back-to-chats"><i class="fa-solid fa-xmark"></i></button>
+                </div>
                 <div>
                     <button class="go-back-to-friends-btn"><i class="fa-solid fa-arrow-left"></i></button>
                     <p>Profile</p>
@@ -99,11 +106,10 @@
 
                 <div class="btn-container">
                     <a href="/logout">Logout</a>
-
                 </div>
             </div>
             <div class="profile-card">
-                <img src="<%= currUserDoc.imageUrl %>" alt="profile-img">
+                <img src="<%= currUserDoc.imageUrl %>" id="profile-img" alt="profile-img">
                 <form method="post" action="/chats" enctype="multipart/form-data">
                     <label for="image">Upload Image</label>
                     <input id="image" type="file" accept="image/*" name="image" hidden>
@@ -112,11 +118,14 @@
                     <%= currUserDoc.fullName %>
                 </p>
             </div>
-            <div class="image-editor-div">
-                <img id="preview">
-                <button class="done-crop">Done</button>
-            </div>
+
         </div>
+    </div>
+    <div class="image-editor-div">
+        <img id="preview">
+        <button class="done-crop">Done
+            <i class="fas fa-circle-notch fa-pulse"></i>
+        </button>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
