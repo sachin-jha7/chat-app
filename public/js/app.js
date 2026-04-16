@@ -1,12 +1,10 @@
 const socket = io();
 
-
-
 const form = document.querySelector(".form");
 const input = document.querySelector(".input");
 
 const allCards = document.querySelectorAll(".card-container .card");
-// console.log(allCards);
+
 
 let roomId;
 let cardId;
@@ -21,33 +19,34 @@ let cropper;
 imgInp.addEventListener("change", (event) => {
     const file = event.target.files[0];
     document.querySelector(".image-editor-div").style.display = "block";
+    document.querySelector(".fa-pulse").style.display = "none";
     const url = URL.createObjectURL(file);
     preview.src = url;
-    // document.querySelector(".profile-section").style.filter = "blur(8px)";
-    // document.querySelector(".chat-section").style.filter = "blur(8px)";
 
     if (cropper) cropper.destroy();
 
     cropper = new Cropper(preview, {
-        aspectRatio: NaN,
+        aspectRatio: 1,
         viewMode: 1,
         autoCropArea: 1,
         responsive: true,
         background: false,
     });
+    cropDoneBtn.style.cursor = "pointer";
 });
 
 const cropDoneBtn = document.querySelector(".done-crop");
 
 cropDoneBtn.addEventListener("click", () => {
+    cropDoneBtn.style.cursor = "wait";
+    if (window.innerWidth < 430) {
+        document.querySelector(".fa-pulse").style.display = "inline-block";
+    }
     const canvas = cropper.getCroppedCanvas({
         width: 300,
         height: 300,
         imageSmoothingQuality: "high"
     });
-    setTimeout(() => {
-        document.querySelector(".image-editor-div").style.display = "none";
-    }, 1000);
     canvas.toBlob((blob) => {
         const formData = new FormData();
         formData.append("image", blob);
@@ -55,17 +54,24 @@ cropDoneBtn.addEventListener("click", () => {
         fetch("/chats", {
             method: "POST",
             body: formData
-        });
+        })
+            .then((res) => {
+                return res.json();
+            })
+            .then(data => {
+                document.querySelector("#profile-img").src = data.imageUrl;
+                document.querySelector(".image-editor-div").style.display = "none";
+            });
     });
+
 });
 
 
 // Showing chat history on selection of a chat
 
-// console.log(allCards)
+
 for (let card of allCards) {
     card.addEventListener("click", () => {
-        // console.log("clicked")
         manageChatSelection(card);
     });
 }
@@ -76,31 +82,25 @@ function joinRoom() {
 }
 
 
-// // Login page navigations 
-
-// const openSignupFormBtn = document.querySelector("")
-
-// console.log(currUserId);
-
 // Side Bar navigations
 
 
+// For screen width <= 600px
 
 const closeChatBtn = document.querySelector(".go-back-to-friends-btn");
 closeChatBtn.addEventListener("click", () => {
     document.querySelector(".chat-section").style.top = "100%";
-})
+});
 
 const showProfileBtn = document.querySelector(".show-profile-btn");
 showProfileBtn.addEventListener("click", () => {
     document.querySelector(".profile-section").style.top = "0";
-})
+});
 
 const closeProfileBtn = document.querySelector(".profile-section .go-back-to-friends-btn");
 closeProfileBtn.addEventListener("click", () => {
     document.querySelector(".profile-section").style.top = "100%";
-})
-
+});
 
 
 const findPeopleBtn = document.querySelector(".find-people-btn");
@@ -116,6 +116,21 @@ findPeopleCrossBtn.addEventListener("click", () => {
 });
 
 
+//  Screen Width till 1137px
+
+const profileContainer = document.querySelector(".profile-section");
+const openProfileBtn = document.querySelectorAll(".profile-open-btn");
+for (let btn of openProfileBtn) {
+    btn.addEventListener("click", () => {
+        profileContainer.style.right = "0";
+    });
+}
+const profileCloseBtn = document.querySelector(".go-back-to-chats");
+profileCloseBtn.addEventListener("click", () => {
+    profileContainer.style.right = "100%";
+});
+
+
 const getNotificationBtn = document.querySelector(".notifi-btn");
 const notificationBar = document.querySelector(".notification-bar");
 const notificationCloseBtn = document.querySelector(".notification-cross-btn");
@@ -123,8 +138,9 @@ const notificationCloseBtn = document.querySelector(".notification-cross-btn");
 getNotificationBtn.addEventListener("click", async () => {
     socket.emit("get-notifications", ({ currUserId }));
     notificationBar.style.top = "0";
-    // notificationIcon.style.color = "gainsboro";
+    notificationIcon.style.color = "gainsboro";
 });
+
 notificationCloseBtn.addEventListener("click", () => {
     notificationBar.style.top = "100%";
 });
@@ -135,7 +151,7 @@ notificationCloseBtn.addEventListener("click", () => {
 const notificationContainer = document.querySelector(".notification-container");
 socket.on("print-notifications", ({ notificationArray }) => {
     notificationContainer.innerHTML = "";
-    // document.querySelector(".fa-circle").style.display = "inline-block";
+
     for (let notification of notificationArray) {
         let div = document.createElement("div");
         div.classList.add("notification-card");
@@ -161,7 +177,7 @@ socket.on("print-notifications", ({ notificationArray }) => {
             setTimeout(() => {
                 notificationContainer.removeChild(div);
             }, 2000);
-            // const acceptedUserId = notification._id;
+
             socket.emit("remove-notifications", ({ currUserId, requestedUserId }));
             socket.emit("update-friend-list", ({ requestedUserId, currUserId }));
         });
@@ -192,6 +208,8 @@ socket.on("print-notifications", ({ notificationArray }) => {
 
 // Search people
 
+let iterateToNext = false;
+
 const peopleSearchForm = document.querySelector(".people-search-bar form");
 const peopleSearchInput = document.querySelector(".people-search-bar form input");
 const userCardContainer = document.querySelector(".user-container");
@@ -201,56 +219,77 @@ peopleSearchForm.addEventListener("submit", async (event) => {
     if (event.submitter.innerText == "Search") {
         // console.log(peopleSearchInput.value);
         const name = peopleSearchInput.value;
-        const res = await fetch(`/chats/find/${name}`);
-        peopleSearchInput.value = "";
-        const jsonRes = await res.json();   // Array of searched user
-        // console.log(jsonRes);
-        for (let doc of jsonRes) {
-            if(doc._id == currUserId) {
-                continue;
+        try {
+            const res = await fetch(`/chats/find/${name}`);
+            const jsonRes = await res.json();
+            // console.log(res);
+            peopleSearchInput.value = "";
+
+            // Array of searched user
+            if ((jsonRes.userInfo.length) == 0) {
+                document.querySelector(".not-found").style.display = "block";
             }
-            const userCard = document.createElement("div");
-            userCard.classList.add("user-card");
-            const img = document.createElement("img");
-            img.src = doc.imageUrl;
-            userCard.appendChild(img);
-            const p = document.createElement("p");
-            p.innerText = doc.fullName;
-            userCard.appendChild(p);
-            userCard.setAttribute("id", `${doc._id}`);
-            const btn = document.createElement("button");
-            btn.innerHTML = "&plus; Connect";
-            btn.classList.add("connect-btn");
+            for (let doc of (jsonRes.userInfo)) {
+                if (doc._id == currUserId) {
+                    continue;
+                }
+                for (let friend of (jsonRes.friendsOfCurrUser)) {
+                    if (doc._id == friend) {
+                        iterateToNext = true;
+                    }
+                }
+                if (iterateToNext) {
+                    iterateToNext = false
+                    continue;
+                }
+                document.querySelector(".not-found").style.display = "none";
+                const userCard = document.createElement("div");
+                userCard.classList.add("user-card");
+                const img = document.createElement("img");
+                img.src = doc.imageUrl;
+                userCard.appendChild(img);
+                const p = document.createElement("p");
+                p.innerText = doc.fullName;
+                userCard.appendChild(p);
+                userCard.setAttribute("id", `${doc._id}`);
+                const btn = document.createElement("button");
+                btn.innerHTML = "&plus; Connect";
+                btn.classList.add("connect-btn");
 
-            btn.addEventListener("click", function () {
-                // console.log(this.parentElement.id)
-                const requestedCardId = this.parentElement.id;
-                this.innerHTML = "&#10004;Request Sent";
-                this.style.border = "2px solid limegreen";
-                this.disabled = true;
+                btn.addEventListener("click", function () {
+                    // console.log(this.parentElement.id)
+                    const requestedCardId = this.parentElement.id;
+                    this.innerHTML = "&#10004;Request Sent";
+                    this.style.border = "2px solid limegreen";
+                    this.disabled = true;
 
-                let withDrawBtn = document.createElement("button");
-                withDrawBtn.innerHTML = "&#10005; Withdraw";
-                withDrawBtn.style.border = "2px solid #ef4444";
-                userCard.appendChild(withDrawBtn);
-                withDrawBtn.addEventListener("click", () => {
-                    btn.innerHTML = "&plus; Connect";
-                    btn.style.border = "2px solid #0084ff";
-                    btn.disabled = false;
-                    userCard.removeChild(withDrawBtn);
-                    notificationIcon.style.color = "gainsboro";
-                    socket.emit("pull-connection-request-notification", ({ requestedCardId }));
-                    socket.emit("get-notifications", ({ currUserId }));
+                    let withDrawBtn = document.createElement("button");
+                    withDrawBtn.innerHTML = "&#10005; Withdraw";
+                    withDrawBtn.style.border = "2px solid #ef4444";
+                    userCard.appendChild(withDrawBtn);
+                    withDrawBtn.addEventListener("click", () => {
+                        btn.innerHTML = "&plus; Connect";
+                        btn.style.border = "2px solid #0084ff";
+                        btn.disabled = false;
+                        userCard.removeChild(withDrawBtn);
+                        notificationIcon.style.color = "gainsboro";
+                        socket.emit("pull-connection-request-notification", ({ requestedCardId }));
+                        socket.emit("get-notifications", ({ currUserId }));
 
+                    });
+                    socket.emit("connection-request", ({ requestedCardId, currUserId }));
                 });
-                socket.emit("connection-request", ({ requestedCardId, currUserId }));
-            });
 
 
-            userCard.appendChild(btn);
-            userCardContainer.appendChild(userCard);
+                userCard.appendChild(btn);
+                userCardContainer.appendChild(userCard);
 
+            }
+        } catch (err) {
+            document.querySelector(".not-found").style.display = "block";
         }
+
+
     }
 });
 
@@ -274,14 +313,14 @@ const manageChatSelection = async (card) => {
     const p = chatNavCard.querySelector("p");
     p.innerText = jsonRes.clickedUserInfo.fullName;
 
+
     const noChatText = document.querySelector(".no-chat");
     const chatWrapper = document.querySelector(".chat-wrapper");
     noChatText.style.display = "none";
     document.querySelector(".temp-nav").style.display = "none";
     chatWrapper.style.display = "flex";
 
-    if (window.innerWidth < 430) {
-
+    if (window.innerWidth < 600) {
         document.querySelector(".chat-section").style.top = "0";
     }
 
@@ -341,10 +380,19 @@ socket.on("update-DOM-of-friend-list", ({ friendInfoArray }) => {
         let div = document.createElement("div");
         div.classList.add("card");
         div.setAttribute("id", `${friend._id}`);
+        let imgBox = document.createElement("div");
+        imgBox.classList.add("img-box");
+
         let img = document.createElement("img");
         img.src = friend.imageUrl;
-        div.appendChild(img);
-        
+        imgBox.appendChild(img);
+
+        let icon = document.createElement("i");
+        icon.classList.add("fa-solid", "fa-circle");
+        imgBox.appendChild(icon);
+
+        div.appendChild(imgBox);
+
         let p = document.createElement("p");
         p.classList.add("name");
         p.innerText = `${friend.fullName}`;
@@ -360,20 +408,32 @@ socket.on("update-DOM-of-friend-list", ({ friendInfoArray }) => {
 // Update sender's DOM
 
 socket.on("friend-request-accepted", ({ secondUserfriendInfoArray, requestedUserId }) => {
-    // console.log("Your request was accepted by:", data.newFriendId);
+    // alert("Your request was accepted by:", data.newFriendId);
     friendCardContainer.innerHTML = "";
-    //  console.log(secondUserfriendInfoArray)
+    console.log(secondUserfriendInfoArray)
     for (let friend of secondUserfriendInfoArray) {
         let div = document.createElement("div");
         div.classList.add("card");
         div.setAttribute("id", `${friend._id}`);
+
+        let imgBox = document.createElement("div");
+        imgBox.classList.add("img-box");
+
         let img = document.createElement("img");
         img.src = friend.imageUrl;
-        div.appendChild(img);
+        imgBox.appendChild(img);
+
+        let icon = document.createElement("i");
+        icon.classList.add("fa-solid", "fa-circle");
+        imgBox.appendChild(icon);
+
+        div.appendChild(imgBox);
+
         let p = document.createElement("p");
         p.classList.add("name");
         p.innerText = `${friend.fullName}`;
         div.appendChild(p);
+
         div.addEventListener("click", () => {
             manageChatSelection(div);
         });
@@ -398,17 +458,57 @@ socket.on("show-ball", () => {
 
 
 
-// const statusIcon = document.querySelector(".status");
-// console.log(statusIcon);
+// SHOW user status
+
+let array = [];
+
+socket.on("friends-list-of-current-user", ({ friendsCollection }) => {
+    array = friendsCollection;
+});
+
+let allP = document.querySelectorAll("p");
 
 socket.on("user-status-change", (data) => {
-    const { userId, status, friendList } = data;
-    console.log(`User ${userId} is now ${status}`);
+    const { userId, status, onlineUsers, offlineUsers } = data;
+    // console.log(`User ${userId} is now ${status}`);
+
+    for (let i = 0; i < array.length; i++) {
+        if (onlineUsers) {
+            for (let j = 0; j < onlineUsers.length; j++) {
+                if (array[i]._id == onlineUsers[j]) {
+                    // console.log(`${array[i].fullName} is ${status}`);
+                    for (let p of allP) {
+                        if (p.innerText == array[i].fullName) {
+                            if (status == "Online") {
+
+                                p.previousElementSibling.lastElementChild.style.color = "limegreen";
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (offlineUsers) {
+            for (let j = 0; j < offlineUsers.length; j++) {
+                if (array[i]._id == offlineUsers[j]) {
+                    for (let p of allP) {
+                        if (p.innerText == array[i].fullName) {
+                            if (status == "Offline") {
+                                p.previousElementSibling.lastElementChild.style.color = "red";
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
 
 });
 
 
-// Socket.IO Things
+// Sending and receiving messages
 
 form.addEventListener("submit", (e) => {
     e.preventDefault();
