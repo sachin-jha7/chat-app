@@ -14,8 +14,6 @@ h3 {
     top: 15%;
     left: 50%;
     transform: translate(-50%, -20%);
-    color: silver;
-    color: #cbd5e1;
     color: #818cf8;
     font-size: 30px;
     white-space: nowrap;
@@ -26,8 +24,6 @@ form {
     background-color: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
     padding: 40px;
-    /* margin: auto;
-    margin-top: 120px; */
     position: fixed;
     top: 50%;
     left: 50%;
@@ -50,12 +46,13 @@ div i {
 }
 
 input {
-    width: 270px;
+    width: 290px;
     height: 40px;
     padding: 0px 15px;
     border-radius: 3px;
     outline: none;
     border: none;
+    font-size: 17px;
 }
 
 button {
