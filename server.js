@@ -48,18 +48,19 @@ let currUser;
 let receiverId;
 let allFriendsOfCurrUser;
 
+
 // home route
 
-app.get("/", (req,res) => {
+app.get("/", (req, res) => {
     res.redirect("/chats");
 });
 
 // Index Route
 
+let statusCheckArray = [];
+
 app.get("/chats", authMiddleware.verify, async (req, res) => {
-    // console.log(req.user.id);
     currUser = req.user.id;
-    // const userName = await User.findById(currUser);
 
     let friendsArray = [];
     let currUserDoc = await User.findById(currUser);
@@ -69,6 +70,7 @@ app.get("/chats", authMiddleware.verify, async (req, res) => {
         let friend = await User.findById(friends);
         friendsArray.push(friend);
     }
+    statusCheckArray = friendsArray;
 
     res.render("index.ejs", { currUserDoc, currUser, friendsArray });
 });
@@ -79,31 +81,38 @@ app.get("/chats", authMiddleware.verify, async (req, res) => {
 app.post("/chats", authMiddleware.verify, upload.single("image"), async (req, res) => {
     try {
         // console.log("route hit");
-        if(!req.file) {
+        if (!req.file) {
             return res.status(400).send(`Error: No File`);
         }
         const stream = cloudinary.uploader.upload_stream(
             { folder: "chat-app" },
             async (error, result) => {
-                if (error) {
-                    return res.status(500).send(`Error: ${error.message}`);
+                try {
+                    if (error) {
+                        return res.status(500).send(`Error: ${error.message}`);
+                    }
+                    if (!currUser) {
+                        return res.status(401).send("Unauthorized");
+                    }
+                    const currUserDoc = await User.findById(currUser);
+                    currUserDoc.imageUrl = result.secure_url;
+                    await currUserDoc.save();
+
+                    return res.json({
+                        success: true,
+                        imageUrl: result.secure_url
+                    });
+                } catch (err) {
+                    return res.status(500).send(`Error: ${err.message}`);
                 }
-                const currUserDoc = await User.findById(currUser);
-                currUserDoc.imageUrl = result.secure_url;
-                // console.log(currUserDoc);
-                await currUserDoc.save();
+
             }
-            
-        )
-        setTimeout(() => {
-            stream.end(req.file.buffer);
-            res.redirect("/chats");
-        }, 3000);
-        
-    } catch(err) {
+        );
+        stream.end(req.file.buffer);
+    } catch (err) {
         res.status(500).send(`Error: ${err.message}`);
     }
-})
+});
 
 
 let chatRoomName;
@@ -111,24 +120,32 @@ let chatRoomName;
 //  Show Chat History Route
 
 app.get("/chats/:id", async (req, res) => {
-    receiverId = req.params;
-    const clickedUserId = receiverId.id;
-
-    const allMsg = await Messages.find({ roomId: chatRoomName });
-    const clickedUserInfo = await User.findById(clickedUserId);
-    res.send({ allMsg, clickedUserInfo });
+    try {
+        receiverId = req.params;
+        const clickedUserId = receiverId.id;
+        const allMsg = await Messages.find({ roomId: chatRoomName });
+        const clickedUserInfo = await User.findById(clickedUserId);
+        res.send({ allMsg, clickedUserInfo });
+    } catch (err) {
+        res.send(`Error: ${err.message}`);
+    }
 });
 
 
 // Show users based on search query
 
-app.get("/chats/find/:name", async (req, res) => {
-    const name = req.params;
-    let searchedName = name.name;
-    searchedName = searchedName.trim().toUpperCase();
-    // console.log(searchedName.name);
-    const userInfo = await User.find({ username: searchedName });
-    res.send(userInfo);
+app.get("/chats/find/:name", authMiddleware.verify, async (req, res) => {
+    try {
+        const name = req.params;
+        let searchedName = name.name;
+        searchedName = searchedName.trim().toUpperCase();
+        const userInfo = await User.find({ username: searchedName });
+        const CurrUserDoc = await User.findById(currUser);
+        const friendsOfCurrUser = CurrUserDoc.friends;
+        res.send({ userInfo, friendsOfCurrUser });
+    } catch (err) {
+        res.send(`Error: ${err.message}`);
+    }
 });
 
 
@@ -166,11 +183,13 @@ app.get("/logout", authMiddleware.logout);
 
 // socket.id = connected client's id
 
+let OnlineUsersArray = [];
+let OfflineUsersArray = [];
 
 io.on('connection', (socket) => {
     console.log("A user connected");
 
-
+    socket.emit("friends-list-of-current-user", { friendsCollection: statusCheckArray })
 
     try {
 
@@ -178,22 +197,35 @@ io.on('connection', (socket) => {
             const onlineUserToken = socket.handshake.headers.cookie.slice(6);
             const decoded = jwt.verify(onlineUserToken, process.env.JWT_SECRET);
             socket.join(decoded.id);
-            socket.broadcast.emit("user-status-change", {
+
+            OnlineUsersArray.push(decoded.id);
+            io.emit("user-status-change", {
                 userId: decoded.id,
                 status: "Online",
+                onlineUsers: OnlineUsersArray
             });
 
+            for (let i = 0; i < OfflineUsersArray.length; i++) {
+                if (OfflineUsersArray[i] == decoded.id) {
+                    OfflineUsersArray.splice(i, 1);
+                }
+            }
+
             socket.on("disconnect", () => {
-                console.log(`User ${decoded.id} disconnected`);
-                socket.broadcast.emit("user-status-change", {
+                // console.log(`User ${decoded.id} disconnected`);
+                for (let i = 0; i < OnlineUsersArray.length; i++) {
+                    if (OnlineUsersArray[i] == decoded.id) {
+                        OnlineUsersArray.splice(i, 1);
+                    }
+                }
+                OfflineUsersArray.push(decoded.id);
+                io.emit("user-status-change", {
                     userId: decoded.id,
-                    status: "Offline"
+                    status: "Offline",
+                    offlineUsers: OfflineUsersArray
                 });
             });
         }
-        // const onlineUsers = new Map();
-
-        // onlineUsers.set(decoded.id, socket.id);
     } catch (err) {
         console.log("wrong token");
         console.log(err);
@@ -223,8 +255,7 @@ io.on('connection', (socket) => {
         const requestedUser = await User.findById(requestedCardId);
         requestedUser.notifications.push(currUserId);
         const requestedUserId = requestedUser._id.toString();
-        // const isNewNotification = requestedUser.newNotification = "true";
-        // console.log(requestedUserId.toString());
+
         await requestedUser.save();
         io.to(requestedUserId).emit("show-ball");
     });
@@ -272,7 +303,6 @@ io.on('connection', (socket) => {
         for (let notificationId of getNotificationIds) {
             let newNotification = await User.findById(notificationId);
             notificationArray.push(newNotification);
-
         }
         socket.emit("print-notifications", ({ notificationArray }));
     });
@@ -285,6 +315,7 @@ io.on('connection', (socket) => {
         await getCurrUserDoc.save();
     });
 });
+
 
 const PORT = process.env.PORT || 3000;
 
