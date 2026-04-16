@@ -8,7 +8,7 @@ const msgSchema = new Schema({
     msg: String,
     createdAt: {
         type: Date,
-        value: Date.now()
+        default: Date.now()
     }
 });
 
