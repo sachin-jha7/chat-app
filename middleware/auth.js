@@ -13,7 +13,7 @@ module.exports.verify = async (req, res, next) => {
 
         next();
     } catch (err) {
-        res.status(401).send("wrong token");
+        res.status(401).redirect('/login');
     }
 }
 
