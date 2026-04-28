@@ -105,8 +105,17 @@ body {
     /* z-index: 99; */
 }
 
-.people-search-bar input {
+.people-search-bar form div {
+    padding: 7px 18px;
+    background-color: #fff;
+    border-radius: 10px;
+}
+
+.people-search-bar form div input {
     padding: 7px 10px;
+    border: none;
+    outline: none;
+    border-radius: 10px;
 }
 
 .people-search-bar .search-btn {
@@ -126,6 +135,35 @@ body {
     background-color: #2563eb;
     border: 1px solid #2563eb;
     cursor: pointer;
+}
+
+@media (max-width: 360px) {
+    .people-search-bar form div {
+        padding: 7px 14px;
+    }
+}
+
+@media (776px <=width <=874px) {
+    .people-search-bar form div {
+        padding: 7px 17px;
+    }
+
+    .people-search-bar form div input {
+        padding: 7px 0px;
+        width: 150px;
+    }
+}
+
+@media (601px <=width <=699px) {
+    .people-search-bar form div {
+        padding: 7px 17px;
+    }
+
+    .people-search-bar form div input {
+        padding: 7px 0px;
+        width: 143px;
+    }
+
 }
 
 .people-search-bar .find-people-cross-btn {
@@ -420,9 +458,13 @@ body {
 .input {
     height: 40px;
     border: none;
+    outline: none;
     padding: 0 16px;
     flex-grow: 1;
     border-radius: 16px;
+    background-color: #081c38;
+    color: #fff;
+    font-size: 18px;
 }
 
 .form button {
@@ -482,7 +524,7 @@ body {
 
 
 .chat-section .nav .nav-card {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(0, 0, 0, 0.2);
     backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
