@@ -473,14 +473,7 @@ body {
     margin-right: 10px;
 }
 
-.form button i {
-    color: #22c55e;
-    font-size: 35px;
-    transform: rotate(45deg);
-}
-
-.form button:hover i {
-    font-size: 35.4px;
+.form button:hover svg {
     cursor: pointer;
 }
 
