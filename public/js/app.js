@@ -33,14 +33,16 @@ imgInp.addEventListener("change", (event) => {
         background: false,
     });
     cropDoneBtn.style.cursor = "pointer";
+    cropDoneBtn.disabled = false;
 });
 
 const cropDoneBtn = document.querySelector(".done-crop");
 
 cropDoneBtn.addEventListener("click", () => {
     cropDoneBtn.style.cursor = "wait";
-    if (window.innerWidth < 430) {
+    if (window.innerWidth < 600) {
         document.querySelector(".fa-pulse").style.display = "inline-block";
+        cropDoneBtn.disabled = true;
     }
     const canvas = cropper.getCroppedCanvas({
         width: 300,
